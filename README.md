@@ -18,60 +18,60 @@ monitoring system that provides a wealth of features and device support.
 > Want to be notified of new releases? Check out 🔔 [Diun (Docker Image Update Notifier)](https://github.com/crazy-max/diun)
 > project!
 
-___
+---
 
-* [Features](#features)
-* [Demo](#demo)
-* [Build locally](#build-locally)
-* [Image](#image)
-* [Environment variables](#environment-variables)
-  * [General](#general)
-  * [Redis](#redis)
-  * [Dispatcher service](#dispatcher-service)
-  * [Syslog-ng](#syslog-ng)
-  * [Snmptrapd](#snmptrapd)
-  * [Database](#database)
-  * [Misc](#misc)
-* [Volumes](#volumes)
-* [Ports](#ports)
-* [Usage](#usage)
-  * [Docker Compose](#docker-compose)
-  * [Command line](#command-line)
-  * [First launch](#first-launch)
-* [Upgrade](#upgrade)
-* [Configuration Management](#configuration-management)
-  * [Initial Configuration](#initial-configuration)
-  * [Live Configuration](#live-configuration)
-  * [Re-Apply YAML Config](#re-apply-yaml-config)
-  * [Live Config](#live-config)
-* [Notes](#notes)
-  * [LNMS command](#lnms-command)
-  * [Validate](#validate)
-  * [Dispatcher service container](#dispatcher-service-container)
-  * [Syslog-ng container](#syslog-ng-container)
-  * [Snmptrapd container](#snmptrapd-container)
-  * [Add a LibreNMS plugin](#add-a-librenms-plugin)
-  * [Additional Monitoring plugins](#additional-monitoring-plugins)
-  * [Custom alert templates](#custom-alert-templates)
-* [Contributing](#contributing)
-* [License](#license)
+- [Features](#features)
+- [Demo](#demo)
+- [Build locally](#build-locally)
+- [Image](#image)
+- [Environment variables](#environment-variables)
+  - [General](#general)
+  - [Redis](#redis)
+  - [Dispatcher service](#dispatcher-service)
+  - [Syslog-ng](#syslog-ng)
+  - [Snmptrapd](#snmptrapd)
+  - [Database](#database)
+  - [Misc](#misc)
+- [Volumes](#volumes)
+- [Ports](#ports)
+- [Usage](#usage)
+  - [Docker Compose](#docker-compose)
+  - [Command line](#command-line)
+  - [First launch](#first-launch)
+- [Upgrade](#upgrade)
+- [Configuration Management](#configuration-management)
+  - [Initial Configuration](#initial-configuration)
+  - [Live Configuration](#live-configuration)
+  - [Re-Apply YAML Config](#re-apply-yaml-config)
+  - [Live Config](#live-config)
+- [Notes](#notes)
+  - [LNMS command](#lnms-command)
+  - [Validate](#validate)
+  - [Dispatcher service container](#dispatcher-service-container)
+  - [Syslog-ng container](#syslog-ng-container)
+  - [Snmptrapd container](#snmptrapd-container)
+  - [Add a LibreNMS plugin](#add-a-librenms-plugin)
+  - [Additional Monitoring plugins](#additional-monitoring-plugins)
+  - [Custom alert templates](#custom-alert-templates)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Features
 
-* Run as non-root user
-* Multi-platform image
-* [Dispatcher service](#dispatcher-service) as "sidecar" container
-* Syslog-ng support through a ["sidecar" container](#syslog-ng)
-* Snmp-trap support through a ["sidecar" container](#snmptrapd)
-* Ability to add custom Monitoring plugins
-* Ability to add custom alert templates
-* OPCache enabled to store precompiled script bytecode in shared memory
-* [s6-overlay](https://github.com/just-containers/s6-overlay/) as process supervisor
-* [Traefik](https://github.com/containous/traefik-library-image) as reverse proxy and creation/renewal of Let's Encrypt certificates (see [this template](examples/traefik))
-* [Redis](https://github.com/docker-library/redis) image ready to use for better scalability
-* [RRDcached](https://github.com/crazy-max/docker-rrdcached) image ready to use for data caching and graphs
-* [msmtpd SMTP relay](https://github.com/crazy-max/docker-msmtpd) image to send emails
-* [MariaDB](https://github.com/docker-library/mariadb) image as database instance
+- Run as non-root user
+- Multi-platform image
+- [Dispatcher service](#dispatcher-service) as "sidecar" container
+- Syslog-ng support through a ["sidecar" container](#syslog-ng)
+- Snmp-trap support through a ["sidecar" container](#snmptrapd)
+- Ability to add custom Monitoring plugins
+- Ability to add custom alert templates
+- OPCache enabled to store precompiled script bytecode in shared memory
+- [s6-overlay](https://github.com/just-containers/s6-overlay/) as process supervisor
+- [Traefik](https://github.com/containous/traefik-library-image) as reverse proxy and creation/renewal of Let's Encrypt certificates (see [this template](examples/traefik))
+- [Redis](https://github.com/docker-library/redis) image ready to use for better scalability
+- [RRDcached](https://github.com/crazy-max/docker-rrdcached) image ready to use for data caching and graphs
+- [msmtpd SMTP relay](https://github.com/crazy-max/docker-msmtpd) image to send emails
+- [MariaDB](https://github.com/docker-library/mariadb) image as database instance
 
 ## Demo
 
@@ -110,24 +110,24 @@ linux/s390x
 
 ### General
 
-* `TZ`: The timezone assigned to the container (default `UTC`)
-* `PUID`: LibreNMS user id (default `1000`)
-* `PGID`: LibreNMS group id (default `1000`)
-* `MEMORY_LIMIT`: PHP memory limit (default `256M`)
-* `MAX_INPUT_VARS`: PHP max input vars (default `1000`)
-* `UPLOAD_MAX_SIZE`: Upload max size (default `16M`)
-* `CLEAR_ENV`: Clear environment in FPM workers (default `yes`)
-* `FPM_PM_MAX_CHILDREN`: FPM max Children (default: `15`)
-* `FPM_PM_START_SERVERS`: FPM start servers (default: `2`)
-* `FPM_PM_MIN_SPARE_SERVERS`: FPM min spare servers (default: `1`)
-* `FPM_PM_MAX_SPARE_SERVERS`: FPM max spare servers (default: `6`)
-* `OPCACHE_MEM_SIZE`: PHP OpCache memory consumption (default `128`)
-* `LISTEN_IPV6`: Enable IPv6 for Nginx (default `true`)
-* `REAL_IP_FROM`: Trusted addresses that are known to send correct replacement addresses (default `0.0.0.0/32`)
-* `REAL_IP_HEADER`: Request header field whose value will be used to replace the client address (default `X-Forwarded-For`)
-* `LOG_IP_VAR`: Use another variable to retrieve the remote IP address for access [log_format](http://nginx.org/en/docs/http/ngx_http_log_module.html#log_format) on Nginx. (default `remote_addr`)
-* `SESSION_DRIVER`: [Driver to use for session storage](https://github.com/librenms/librenms/blob/master/config/session.php) (default `file`)
-* `CACHE_DRIVER`: [Driver to use for cache and locks](https://github.com/librenms/librenms/blob/master/config/cache.php) (default `database`)
+- `TZ`: The timezone assigned to the container (default `UTC`)
+- `PUID`: LibreNMS user id (default `1000`)
+- `PGID`: LibreNMS group id (default `1000`)
+- `MEMORY_LIMIT`: PHP memory limit (default `256M`)
+- `MAX_INPUT_VARS`: PHP max input vars (default `1000`)
+- `UPLOAD_MAX_SIZE`: Upload max size (default `16M`)
+- `CLEAR_ENV`: Clear environment in FPM workers (default `yes`)
+- `FPM_PM_MAX_CHILDREN`: FPM max Children (default: `15`)
+- `FPM_PM_START_SERVERS`: FPM start servers (default: `2`)
+- `FPM_PM_MIN_SPARE_SERVERS`: FPM min spare servers (default: `1`)
+- `FPM_PM_MAX_SPARE_SERVERS`: FPM max spare servers (default: `6`)
+- `OPCACHE_MEM_SIZE`: PHP OpCache memory consumption (default `128`)
+- `LISTEN_IPV6`: Enable IPv6 for Nginx (default `true`)
+- `REAL_IP_FROM`: Trusted addresses that are known to send correct replacement addresses (default `0.0.0.0/32`)
+- `REAL_IP_HEADER`: Request header field whose value will be used to replace the client address (default `X-Forwarded-For`)
+- `LOG_IP_VAR`: Use another variable to retrieve the remote IP address for access [log_format](http://nginx.org/en/docs/http/ngx_http_log_module.html#log_format) on Nginx. (default `remote_addr`)
+- `SESSION_DRIVER`: [Driver to use for session storage](https://github.com/librenms/librenms/blob/master/config/session.php) (default `file`)
+- `CACHE_DRIVER`: [Driver to use for cache and locks](https://github.com/librenms/librenms/blob/master/config/cache.php) (default `database`)
 
 ### Redis
 
@@ -135,68 +135,68 @@ linux/s390x
 > Redis variables should be set on all containers and are required when running
 > more than one dispatcher.
 
-* `REDIS_HOST`: Redis host for poller synchronization
-* `REDIS_SENTINEL`: Redis Sentinel host for high availability Redis cluster
-* `REDIS_SENTINEL_SERVICE`: Redis Sentinel service name (default `librenms`)
-* `REDIS_SCHEME`: Redis scheme (default `tcp`)
-* `REDIS_PORT`: Redis port (default `6379`)
-* `REDIS_PASSWORD`: Redis password
-* `REDIS_DB`: Redis database (default `0`)
-* `REDIS_CACHE_DB`: Redis cache database (default `1`)
+- `REDIS_HOST`: Redis host for poller synchronization
+- `REDIS_SENTINEL`: Redis Sentinel host for high availability Redis cluster
+- `REDIS_SENTINEL_SERVICE`: Redis Sentinel service name (default `librenms`)
+- `REDIS_SCHEME`: Redis scheme (default `tcp`)
+- `REDIS_PORT`: Redis port (default `6379`)
+- `REDIS_PASSWORD`: Redis password
+- `REDIS_DB`: Redis database (default `0`)
+- `REDIS_CACHE_DB`: Redis cache database (default `1`)
 
 ### Dispatcher service
 
 > [!WARNING]
 > You need at least one dispatcher sidecar, otherwise poller will not run [sidecar dispatcher container](#dispatcher-service-container).
 
-* `SIDECAR_DISPATCHER`: Set to `1` to enable sidecar dispatcher mode for this container (default `0`)
-* `DISPATCHER_NODE_ID`: Unique node ID for your dispatcher service
-* `DISPATCHER_ARGS`: Additional args to pass to the [dispatcher service](https://github.com/librenms/librenms/blob/master/librenms-service.py)
+- `SIDECAR_DISPATCHER`: Set to `1` to enable sidecar dispatcher mode for this container (default `0`)
+- `DISPATCHER_NODE_ID`: Unique node ID for your dispatcher service
+- `DISPATCHER_ARGS`: Additional args to pass to the [dispatcher service](https://github.com/librenms/librenms/blob/master/librenms-service.py)
 
 ### Syslog-ng
 
 > [!WARNING]
 > Only used if you enable and run a [sidecar syslog-ng container](#syslog-ng-container).
 
-* `SIDECAR_SYSLOGNG`: Set to `1` to enable sidecar syslog-ng mode for this container (default `0`)
+- `SIDECAR_SYSLOGNG`: Set to `1` to enable sidecar syslog-ng mode for this container (default `0`)
 
 ### Snmptrapd
 
 > [!WARNING]
 > Only used if you enable and run a [sidecar snmptrapd container](#snmptrapd-container).
 
-* `SIDECAR_SNMPTRAPD`: Set to `1` to enable sidecar snmptrapd mode for this container (default `0`)
-* `SNMP_PROCESSING_TYPE`: Sets which type of processing (`log`, `execute`, and/or `net`) to use with the SNMP trap (default `log,execute,net`)
-* `SNMP_USER`: Defines what username to authenticate with (default `librenms_user`)
-* `SNMP_AUTH`: Defines what password to authenticate with (default `auth_pass` should not be used, but will work)
-* `SNMP_PRIV`: Defines what password to encrypt packages with (default `priv_pass` should not be used, but will work)
-* `SNMP_AUTH_PROTO`: Sets what protocol (`MD5`|`SHA`) to use for authentication (default `SHA`)
-* `SNMP_PRIV_PROTO`: Sets what protocol (`DES`|`AES`) to use for encryption of packages (default `AES`)
-* `SNMP_SECURITY_LEVEL`: Sets what security level (`noauth`|`priv`) to use (default `priv`)
-* `SNMP_ENGINEID`: Defines what SNMP EngineID to use (default `1234567890`)
-* `SNMP_DISABLE_AUTHORIZATION`: Will disable the above access control checks, and revert to the previous behaviour of accepting all incoming notifications. (default `yes`)
-* `SNMP_EXTRA_MIB_DIRS`: [Additional directories where MIB files are for SNMP Traps](https://docs.librenms.org/Extensions/SNMP-Trap-Handler/#option-2) (example `/opt/librenms/mibs/veeam`)
+- `SIDECAR_SNMPTRAPD`: Set to `1` to enable sidecar snmptrapd mode for this container (default `0`)
+- `SNMP_PROCESSING_TYPE`: Sets which type of processing (`log`, `execute`, and/or `net`) to use with the SNMP trap (default `log,execute,net`)
+- `SNMP_USER`: Defines what username to authenticate with (default `librenms_user`)
+- `SNMP_AUTH`: Defines what password to authenticate with (default `auth_pass` should not be used, but will work)
+- `SNMP_PRIV`: Defines what password to encrypt packages with (default `priv_pass` should not be used, but will work)
+- `SNMP_AUTH_PROTO`: Sets what protocol (`MD5`|`SHA`) to use for authentication (default `SHA`)
+- `SNMP_PRIV_PROTO`: Sets what protocol (`DES`|`AES`) to use for encryption of packages (default `AES`)
+- `SNMP_SECURITY_LEVEL`: Sets what security level (`noauth`|`priv`) to use (default `priv`)
+- `SNMP_ENGINEID`: Defines what SNMP EngineID to use (default `1234567890`)
+- `SNMP_DISABLE_AUTHORIZATION`: Will disable the above access control checks, and revert to the previous behaviour of accepting all incoming notifications. (default `yes`)
+- `SNMP_EXTRA_MIB_DIRS`: [Additional directories where MIB files are for SNMP Traps](https://docs.librenms.org/Extensions/SNMP-Trap-Handler/#option-2) (example `/opt/librenms/mibs/veeam`)
 
 ### Database
 
-* `DB_HOST`: MySQL database hostname / IP address
-* `DB_PORT`: MySQL database port (default `3306`)
-* `DB_NAME`: MySQL database name (default `librenms`)
-* `DB_USER`: MySQL user (default `librenms`)
-* `DB_PASSWORD`: MySQL password (default `librenms`)
-* `DB_TIMEOUT`: Time in seconds after which we stop trying to reach the MySQL server (useful for clusters, default `60`)
+- `DB_HOST`: MySQL database hostname / IP address
+- `DB_PORT`: MySQL database port (default `3306`)
+- `DB_NAME`: MySQL database name (default `librenms`)
+- `DB_USER`: MySQL user (default `librenms`)
+- `DB_PASSWORD`: MySQL password (default `librenms`)
+- `DB_TIMEOUT`: Time in seconds after which we stop trying to reach the MySQL server (useful for clusters, default `60`)
 
 ### Misc
 
-* `LIBRENMS_BASE_URL`: URL of your LibreNMS instance (default `/`)
-* `LIBRENMS_SNMP_COMMUNITY`: This container's SNMP v2c community string (default `librenmsdocker`)
-* `MEMCACHED_HOST`: Hostname / IP address of a Memcached server
-* `MEMCACHED_PORT`: Port of the Memcached server (default `11211`)
-* `RRDCACHED_SERVER`: RRDcached server (eg. `rrdcached:42217`)
+- `LIBRENMS_BASE_URL`: URL of your LibreNMS instance (default `/`)
+- `LIBRENMS_SNMP_COMMUNITY`: This container's SNMP v2c community string (default `librenmsdocker`)
+- `MEMCACHED_HOST`: Hostname / IP address of a Memcached server
+- `MEMCACHED_PORT`: Port of the Memcached server (default `11211`)
+- `RRDCACHED_SERVER`: RRDcached server (eg. `rrdcached:42217`)
 
 ## Volumes
 
-* `/data`: Contains configuration, plugins, rrd database, logs, additional Monitoring plugins, additional syslog-ng config files
+- `/data`: Contains configuration, plugins, rrd database, logs, additional Monitoring plugins, additional syslog-ng config files
 
 > [!WARNING]
 > Note that the volume should be owned by the user/group with the specified
@@ -205,9 +205,9 @@ linux/s390x
 
 ## Ports
 
-* `8000`: HTTP port
-* `514 514/udp`: Syslog ports (only used if you enable and run a [sidecar syslog-ng container](#syslog-ng-container))
-* `162 162/udp`: Snmptrapd ports (only used if you enable and run a [sidecar snmptrapd container](#snmptrapd-container))
+- `8000`: HTTP port
+- `514 514/udp`: Syslog ports (only used if you enable and run a [sidecar syslog-ng container](#syslog-ng-container))
+- `162 162/udp`: Snmptrapd ports (only used if you enable and run a [sidecar snmptrapd container](#snmptrapd-container))
 
 ## Usage
 
@@ -223,6 +223,20 @@ $ docker compose up -d
 $ docker compose logs -f
 ```
 
+#### CapRover Integration
+
+For CapRover integration, use the dedicated compose file `examples/compose/compose-caprover.yml` which uses the `captain-overlay-network` instead of direct port mapping:
+
+```console
+$ docker compose -f compose-caprover.yml up -d
+$ docker compose -f compose-caprover.yml logs -f
+```
+
+After deployment, create a CapRover "Nginx Reverse Proxy" app and set the upstream proxy to `http://librenms` (the container name). The LibreNMS web interface will be accessible through the CapRover reverse proxy.
+
+> [!NOTE]
+> The CapRover version removes port 8000 exposure from the main LibreNMS service but retains port mappings for `syslogng` (514) and `snmptrapd` (162) services as they require direct external access for their protocols.
+
 ### Command line
 
 You can also use the following minimal command:
@@ -234,8 +248,7 @@ $ docker run -d -p 8000:8000 --name librenms \
   librenms/librenms:latest
 ```
 
-> [!WARNING]
-> `db` must be a running MySQL instance.
+> [!WARNING] > `db` must be a running MySQL instance.
 
 ### First launch
 
@@ -267,7 +280,7 @@ page_refresh: 300
 webui.default_dashboard_id: 0
 ```
 
-This configuration will be seeded into the LibreNMS database when it is first deployed 
+This configuration will be seeded into the LibreNMS database when it is first deployed
 and will override the default values.
 
 ### Live Configuration
@@ -349,8 +362,7 @@ $ docker run -d --name librenms_dispatcher \
   librenms/librenms:latest
 ```
 
-> [!WARNING]
-> `librenms` must be a valid volume already attached to a LibreNMS container.
+> [!WARNING] > `librenms` must be a valid volume already attached to a LibreNMS container.
 
 ### Syslog-ng container
 
@@ -367,8 +379,7 @@ $ docker run -d --name librenms_syslog \
   librenms/librenms:latest
 ```
 
-> [!WARNING]
-> `librenms` must be a valid volume already attached to a LibreNMS container.
+> [!WARNING] > `librenms` must be a valid volume already attached to a LibreNMS container.
 
 You have to create a configuration file to enable syslog in LibreNMS too. Create
 a file called for example `/data/config/syslog.yaml` with this content :
@@ -392,8 +403,7 @@ $ docker run -d --name librenms_snmptrapd \
   librenms/librenms:latest
 ```
 
-> [!WARNING]
-> `librenms` must be a valid volume already attached to a LibreNMS container.
+> [!WARNING] > `librenms` must be a valid volume already attached to a LibreNMS container.
 
 ### Add a LibreNMS plugin
 
