@@ -68,6 +68,7 @@ monitoring system that provides a wealth of features and device support.
 - OPCache enabled to store precompiled script bytecode in shared memory
 - [s6-overlay](https://github.com/just-containers/s6-overlay/) as process supervisor
 - [Traefik](https://github.com/containous/traefik-library-image) as reverse proxy and creation/renewal of Let's Encrypt certificates (see [this template](examples/traefik))
+- [CapRover](https://caprover.com/) integration example for self-hosted PaaS deployment (see [this template](examples/caprover))
 - [Redis](https://github.com/docker-library/redis) image ready to use for better scalability
 - [RRDcached](https://github.com/crazy-max/docker-rrdcached) image ready to use for data caching and graphs
 - [msmtpd SMTP relay](https://github.com/crazy-max/docker-msmtpd) image to send emails
@@ -225,17 +226,20 @@ $ docker compose logs -f
 
 #### CapRover Integration
 
-For CapRover integration, use the dedicated compose file `examples/compose/compose-caprover.yml` which uses the `captain-overlay-network` instead of direct port mapping:
+For CapRover integration, use the dedicated example in the `examples/caprover` folder which uses the `captain-overlay-network` instead of direct port mapping:
 
 ```console
-$ docker compose -f compose-caprover.yml up -d
-$ docker compose -f compose-caprover.yml logs -f
+$ cd examples/caprover
+$ docker compose up -d
+$ docker compose logs -f
 ```
 
 After deployment, create a CapRover "Nginx Reverse Proxy" app and set the upstream proxy to `http://librenms` (the container name). The LibreNMS web interface will be accessible through the CapRover reverse proxy.
 
 > [!NOTE]
-> The CapRover version removes port 8000 exposure from the main LibreNMS service but retains port mappings for `syslogng` (514) and `snmptrapd` (162) services as they require direct external access for their protocols.
+> The CapRover version removes port 8000 exposure from the main LibreNMS service (handled by CapRover proxy) but retains port mappings for `syslogng` (514) and `snmptrapd` (162) services as they require direct external access for their protocols.
+
+See the [CapRover example README](examples/caprover/README.md) for detailed setup instructions.
 
 ### Command line
 

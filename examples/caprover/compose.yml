@@ -41,10 +41,6 @@ services:
     cap_add:
       - NET_ADMIN
       - NET_RAW
-    ports:
-      - target: 8000
-        published: 8000
-        protocol: tcp
     networks:
       - captain-overlay-network
     depends_on:
